@@ -19,6 +19,23 @@ there of the same name) and adjust ports/paths/network name to fit. It assumes
 this repo is vendored at `vendor/semaphore-all-in-one`; update `build.context` and
 the marklogic patch volume path if you've vendored it elsewhere.
 
+### Vendoring this repo
+
+Add this repo as a git submodule under `vendor/` in your project:
+
+```bash
+git submodule add git@github.com:sjcrook/semaphore-all-in-one.git vendor/semaphore-all-in-one
+git submodule update --init --recursive
+```
+
+Anyone cloning your project afterwards needs to pull the submodule contents too:
+
+```bash
+git clone --recurse-submodules <your-project-url>
+# or, if already cloned:
+git submodule update --init --recursive
+```
+
 The Semaphore build also expects a `semaphore-provisioning/` directory at your
 project root, holding the real license, RPMs, and yum certs for your
 deployment (never committed) — see `template/create-scaffold-provisioning.sh`
