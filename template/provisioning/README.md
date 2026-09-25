@@ -1,9 +1,13 @@
 # semaphore-provisioning
 
-Real, per-deployment Semaphore license/certs/RPMs/credentials — never committed
-(see `/semaphore-provisioning/*` in the repo root `.gitignore`). Fed into the
-Docker build as a named context (`semaphore_provisioning`), configured in
-`docker-compose.yml`'s `semaphore.build.additional_contexts` and consumed via
+This directory holds everything the Semaphore Docker build needs but can't get
+from source control: the real license, certs, RPMs, and credentials for your
+deployment.
+
+These files are never committed (see `/semaphore-provisioning/*` in the repo
+root `.gitignore`). They're fed into the Docker build as a named context
+(`semaphore_provisioning`), configured in `docker-compose.yml`'s
+`semaphore.build.additional_contexts` and consumed via
 `COPY --from=semaphore_provisioning ...` in
 `vendor/semaphore-all-in-one/docker/Dockerfile`.
 
