@@ -12,7 +12,7 @@ The setup consists of 2 containers:
 
 ## Integrating into your project
 
-`docker-compose.yml` in this directory is an example, not something you run
+`docker-compose.example.yml` in this directory is an example, not something you run
 directly from here — copy its `services`, `volumes`, and `networks` entries
 into your own project's `docker-compose.yml` (merging with anything already
 there of the same name) and adjust ports/paths/network name to fit. It assumes

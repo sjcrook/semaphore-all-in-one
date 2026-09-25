@@ -1,5 +1,6 @@
 # Example Docker Compose service definitions for Progress Semaphore + MarkLogic.
-# Copy the `services`, `volumes`, and `networks` entries below into your own
+# This file is not meant to be run directly — copy the `services`, `volumes`,
+# and `networks` entries below into your own
 # project's docker-compose.yml (merging with any existing entries of the same
 # name) and adjust ports/paths/network name to fit. Assumes this repo is
 # vendored at vendor/semaphore-all-in-one relative to your project root —

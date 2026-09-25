@@ -2,3 +2,5 @@ licence/*_lic*.txt
 yum/semaphore-yum.*
 .env
 **/.DS_Store
+docker-compose.yml
+semaphore-provisioning/
