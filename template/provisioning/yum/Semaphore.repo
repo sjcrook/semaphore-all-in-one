@@ -1,0 +1,15 @@
+[smartlogic_extras]
+name=Smartlogic Extras Repository
+baseurl=https://yum.smartlogic.com/extras/
+gpgcheck=0
+sslverify=1
+sslclientcert=/usr/local/semaphore-yum/semaphore-yum.cert
+sslclientkey=/usr/local/semaphore-yum/semaphore-yum.key
+
+[smartlogic_semaphore]
+name=Smartlogic Semaphore Repository
+baseurl=https://yum.smartlogic.com/semaphore/
+gpgcheck=0
+sslverify=1
+sslclientcert=/usr/local/semaphore-yum/semaphore-yum.cert
+sslclientkey=/usr/local/semaphore-yum/semaphore-yum.key

@@ -1,0 +1,59 @@
+--- start-marklogic.sh	2025-07-24 15:33:31
++++ start-marklogic_TEST.sh	2025-08-05 14:56:54
+@@ -225,6 +225,40 @@
+     fi
+     [[ -f "start-marklogic_curl_retry_validate.log" ]] && cat start-marklogic_curl_retry_validate.log
+     error "Expected response code ${expected_response_code}, got ${response_code} from ${endpoint}." exit
++}
++
++################################################################
++# curl_try_init(endpoint, curl_options...)
++# Attempts to intitialize the ML Database. If database already has security, returns 1.
++#
++#   $1 :  The target url to test against
++#   $2+:  Additional options to pass to curl
++################################################################
++function curl_try_init {
++    local retry_count response response_code response_content
++    local endpoint=$1; shift
++    local curl_options=("$@")
++
++    for ((retry_count = 0; retry_count < N_RETRY; retry_count = retry_count + 1)); do
++
++        response=$(curl -s -m 30 -w '%{http_code}' "${curl_options[@]}" "$endpoint")
++        exit_code=$?
++        response_code=$(tail -n1 <<< "$response")
++        response_content=$(sed '$ d' <<< "$response")
++
++        info "${response_code} (${exit_code}): ${response_content}"
++
++        if [[ ${response_code} -eq "202" ]]; then
++            return 0
++        elif [[ ${response_code} -eq "401" ]]; then
++            return 1
++        fi
++
++        sleep ${RETRY_INTERVAL}
++    done
++
++    echo "Problem!!! Got ${response_code} from ${endpoint}."
++    tail -f /dev/null
+ }
+ 
+ ################################################################
+\ No newline at end of file
+@@ -399,8 +433,12 @@
+         # Get last restart timestamp directly before instance-admin call to verify restart after
+         TIMESTAMP=$(curl -s --anyauth "http://${HOSTNAME}:8001/admin/v1/timestamp")
+ 
+-        curl_retry_validate true "http://${HOSTNAME}:8001/admin/v1/instance-admin" 202 \
++        #curl_retry_validate true "http://${HOSTNAME}:8001/admin/v1/instance-admin" 202 \
++        #    "-o" "/dev/null" "-X" "POST" "-H" "Content-type:application/x-www-form-urlencoded; charset=utf-8" "-d" "${ML_ADMIN_USERNAME_PAYLOAD}" "--data-urlencode" "${ML_ADMIN_PASSWORD_PAYLOAD}" "-d" "${ML_REALM_PAYLOAD}" "--data-urlencode" "${ML_WALLET_PASSWORD_PAYLOAD}"
++
++        curl_try_init "http://${HOSTNAME}:8001/admin/v1/instance-admin" \
+             "-o" "/dev/null" "-X" "POST" "-H" "Content-type:application/x-www-form-urlencoded; charset=utf-8" "-d" "${ML_ADMIN_USERNAME_PAYLOAD}" "--data-urlencode" "${ML_ADMIN_PASSWORD_PAYLOAD}" "-d" "${ML_REALM_PAYLOAD}" "--data-urlencode" "${ML_WALLET_PASSWORD_PAYLOAD}"
++        echo $?
+ 
+         restart_check "${HOSTNAME}" "${TIMESTAMP}"
+     fi
+\ No newline at end of file

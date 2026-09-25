@@ -1,0 +1,10 @@
+marklogic.host=marklogic
+marklogic.port=8000
+marklogic.admin.user=MARKLOGIC_ADMIN_USERNAME
+marklogic.admin.password=MARKLOGIC_ADMIN_PASSWORD
+# The name of the database where the documents will be stored.
+# If the database does not exist, it will be created.
+#marklogic.database=semaphore_concepts 
+# The name of the forest which will be attached to the database.
+# If the forest does not exist, it will be created.
+#marklogic.forest=semaphore_concepts_forest

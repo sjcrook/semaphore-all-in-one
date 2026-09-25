@@ -1,0 +1,93 @@
+# Example Docker Compose service definitions for Progress Semaphore + MarkLogic.
+# Copy the `services`, `volumes`, and `networks` entries below into your own
+# project's docker-compose.yml (merging with any existing entries of the same
+# name) and adjust ports/paths/network name to fit. Assumes this repo is
+# vendored at vendor/semaphore-all-in-one relative to your project root —
+# adjust `build.context` and the marklogic patch volume path below if vendored
+# elsewhere.
+services:
+    marklogic:
+        image: progressofficial/marklogic-db:latest-12
+        platform: linux/amd64
+        environment:
+            - MARKLOGIC_INIT=true
+            - MARKLOGIC_ADMIN_USERNAME=${MARKLOGIC_ADMIN_USERNAME}
+            - MARKLOGIC_ADMIN_PASSWORD=${MARKLOGIC_ADMIN_PASSWORD}
+        ports:
+            - 8000-8020:8000-8020
+        entrypoint:
+            - /bin/sh
+            - -c
+            - |
+                cp /usr/local/bin/start-marklogic.sh /tmp/
+                patch /tmp/start-marklogic.sh < /tmp/start-marklogic.patch
+                exec /tmp/start-marklogic.sh
+        volumes:
+            - 'marklogic-volume:/var/opt/MarkLogic/'
+            - './vendor/semaphore-all-in-one/start-marklogic.patch:/tmp/start-marklogic.patch:ro'
+        networks:
+            - semaphore_all_in_one_network_bridge
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - >-
+                    curl -fsS --anyauth
+                    -u "$${MARKLOGIC_ADMIN_USERNAME}:$${MARKLOGIC_ADMIN_PASSWORD}"
+                    http://localhost:8002/manage/v2 >/dev/null
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 60s
+    semaphore:
+        image: semaphore
+        platform: linux/amd64
+        environment:
+            - EXT_CLS_5058=${EXT_CLS_5058:-5058}
+            - EXT_CLS_5059=${EXT_CLS_5059:-5059}
+            - EXT_STUDIO_5080=${EXT_STUDIO_5080:-5080}
+            - EXT_STUDIO_5081=${EXT_STUDIO_5081:-5081}
+            - EXT_CONCEPTS_5092=${EXT_CONCEPTS_5092:-5092}
+            - EXT_SES_8983=${EXT_SES_8983:-8983}
+            - EXT_SES_9983=${EXT_SES_9983:-9983}
+            - MARKLOGIC_ADMIN_USERNAME=${MARKLOGIC_ADMIN_USERNAME}
+            - MARKLOGIC_ADMIN_PASSWORD=${MARKLOGIC_ADMIN_PASSWORD}
+            - MARKLOGIC_SEMAPHORE_DATABASE=${MARKLOGIC_SEMAPHORE_DATABASE}
+            - SEMAPHORE_SUPER_ADMINISTRATOR_PASSWORD=${SEMAPHORE_SUPER_ADMINISTRATOR_PASSWORD}
+        build:
+            context: ./vendor/semaphore-all-in-one
+            dockerfile: ./docker/Dockerfile
+            # Real per-deployment license/certs/RPMs/credentials, supplied via
+            # ./semaphore-provisioning — see template/provisioning/README.md.
+            additional_contexts:
+                semaphore_provisioning: ./semaphore-provisioning
+            args:
+                - RPM_SOURCE=${RPM_SOURCE}
+                - SEM_VER_LP_BASE=${SEM_VER_LP_BASE:-5.8.0}
+                - SEM_VER_LP_ENGLISH=${SEM_VER_LP_ENGLISH:-5.8.0}
+                - SEM_VER_CLASSIFICATION=${SEM_VER_CLASSIFICATION:-5.10.3}
+                - SEM_VER_SES=${SEM_VER_SES:-5.10.3}
+                - SEM_VER_CONCEPTS=${SEM_VER_CONCEPTS:-5.10.3}
+                - SEM_VER_STUDIO=${SEM_VER_STUDIO:-5.10.3}
+        ports:
+            - ${EXT_CLS_5058:-5058}:5058
+            - ${EXT_CLS_5059:-5059}:5059
+            - ${EXT_STUDIO_5080:-5080}:5080
+            - ${EXT_STUDIO_5081:-5081}:5081
+            - ${EXT_CONCEPTS_5092:-5092}:5092
+            - ${EXT_SES_8983:-8983}:8983
+            - ${EXT_SES_9983:-9983}:9983
+        volumes:
+            - semaphore-etc:/etc/opt/semaphore
+            - semaphore-var:/var/opt/semaphore
+        networks:
+            - semaphore_all_in_one_network_bridge
+        depends_on:
+            marklogic:
+                condition: service_healthy
+        stop_grace_period: 60s
+volumes:
+    marklogic-volume: null
+    semaphore-etc: null
+    semaphore-var: null
+networks:
+    semaphore_all_in_one_network_bridge: null
