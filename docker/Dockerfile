@@ -10,8 +10,8 @@ ARG SEM_VER_STUDIO=5.10.3
 
 # Create and populate staging areas
 RUN mkdir -p /tmp/yum /tmp/semaphore_rpms
-COPY yum/ /tmp/yum/
-COPY Semaphore_RPMs/ /tmp/semaphore_rpms/
+COPY --from=semaphore_provisioning yum/ /tmp/yum/
+COPY --from=semaphore_provisioning Semaphore_RPMs/ /tmp/semaphore_rpms/
 
 # Set working directory to avoid ambiguity in `ls`
 WORKDIR /tmp/semaphore_rpms
@@ -95,7 +95,7 @@ WORKDIR /
 
 # License
 
-    COPY licence/semaphore_licence.txt /opt/semaphore/licence
+    COPY --from=semaphore_provisioning licence/semaphore_licence.txt /opt/semaphore/licence
     RUN chmod a+r /opt/semaphore/licence
     ENV SEMAPHORE_LICENCE_DIR /opt/semaphore
 
