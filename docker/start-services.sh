@@ -44,6 +44,8 @@ sed -i \
     -e "s/SEMAPHORE_SUPER_ADMINISTRATOR_PASSWORD/${SEMAPHORE_SUPER_ADMINISTRATOR_PASSWORD}/" \
     /opt/semaphore/studio/conf/studio-authentication.properties
 
+sed -i -E 's/<!--[[:space:]]*(property name="DiscoveryPatternsFile".*\/) -->/ <\1>/' /opt/semaphore/CS/conf/config.xml
+
 cd /opt/semaphore
 /opt/semaphore/create-marklogic-database-for-semaphore.sh
 
