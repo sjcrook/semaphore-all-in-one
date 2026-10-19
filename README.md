@@ -16,15 +16,15 @@ The setup consists of 2 containers:
 directly from here — copy its `services`, `volumes`, and `networks` entries
 into your own project's `docker-compose.yml` (merging with anything already
 there of the same name) and adjust ports/paths/network name to fit. It assumes
-this repo is vendored at `vendor/semaphore-all-in-one`; update `build.context` and
+this repo is vendored at `external/semaphore-all-in-one`; update `build.context` and
 the marklogic patch volume path if you've vendored it elsewhere.
 
 ### Vendoring this repo
 
-Add this repo as a git submodule under `vendor/` in your project:
+Add this repo as a git submodule under `external/` in your project:
 
 ```bash
-git submodule add git@github.com:sjcrook/semaphore-all-in-one.git vendor/semaphore-all-in-one
+git submodule add git@github.com:sjcrook/semaphore-all-in-one.git external/semaphore-all-in-one
 git submodule update --init --recursive
 ```
 

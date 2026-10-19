@@ -1,7 +1,7 @@
 #!/bin/bash
 # Scaffolds a semaphore-provisioning/ directory (real license/certs/RPMs/
 # credentials, fed into the Docker build via additional_contexts).
-# Usage: vendor/semaphore-all-in-one/template/create-scaffold-provisioning.sh [target] [--force]
+# Usage: external/semaphore-all-in-one/template/create-scaffold-provisioning.sh [target] [--force]
 # Run from the consuming project's repo root; target defaults to ./semaphore-provisioning.
 
 set -euo pipefail

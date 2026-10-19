@@ -9,7 +9,7 @@ root `.gitignore`). They're fed into the Docker build as a named context
 (`semaphore_provisioning`), configured in `docker-compose.yml`'s
 `semaphore.build.additional_contexts` and consumed via
 `COPY --from=semaphore_provisioning ...` in
-`vendor/semaphore-all-in-one/docker/Dockerfile`.
+`external/semaphore-all-in-one/docker/Dockerfile`.
 
 Populate this directory with:
 
@@ -22,7 +22,7 @@ semaphore-provisioning/
 ├── docker/
 │   └── Studio/
 │       └── studio-authentication.properties # working example provided; edit if desired
-└── yum/                      # see vendor/semaphore-all-in-one/yum-cert-utils/README.md for cert creation instructions
+└── yum/                      # see external/semaphore-all-in-one/yum-cert-utils/README.md for cert creation instructions
     ├── semaphore-yum.cert    # only needed when RPM_SOURCE is unset/private-repo
     ├── semaphore-yum.key
     └── Semaphore.repo         # working example provided; edit if your repo URLs differ

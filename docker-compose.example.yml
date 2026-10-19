@@ -3,7 +3,7 @@
 # and `networks` entries below into your own
 # project's docker-compose.yml (merging with any existing entries of the same
 # name) and adjust ports/paths/network name to fit. Assumes this repo is
-# vendored at vendor/semaphore-all-in-one relative to your project root —
+# vendored at external/semaphore-all-in-one relative to your project root —
 # adjust `build.context` and the marklogic patch volume path below if vendored
 # elsewhere.
 services:
@@ -25,7 +25,7 @@ services:
                 exec /tmp/start-marklogic.sh
         volumes:
             - 'marklogic-volume:/var/opt/MarkLogic/'
-            - './vendor/semaphore-all-in-one/start-marklogic.patch:/tmp/start-marklogic.patch:ro'
+            - './external/semaphore-all-in-one/start-marklogic.patch:/tmp/start-marklogic.patch:ro'
         networks:
             - semaphore_all_in_one_network_bridge
         healthcheck:
@@ -55,7 +55,7 @@ services:
             - MARKLOGIC_SEMAPHORE_DATABASE=${MARKLOGIC_SEMAPHORE_DATABASE}
             - SEMAPHORE_SUPER_ADMINISTRATOR_PASSWORD=${SEMAPHORE_SUPER_ADMINISTRATOR_PASSWORD}
         build:
-            context: ./vendor/semaphore-all-in-one
+            context: ./external/semaphore-all-in-one
             dockerfile: ./docker/Dockerfile
             # Real per-deployment license/certs/RPMs/credentials, supplied via
             # ./semaphore-provisioning — see template/provisioning/README.md.
